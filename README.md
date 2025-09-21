@@ -8,10 +8,10 @@ The goal of this project is to design and prototype an automated solution for Op
 
 ## 🧑‍💻 Team & Roles
 
-* **[span_2](start_span)Architect:** @[heyxalok] - Manages the overall project structure, integrates all modules, and performs the final security analysis to generate `Key Findings`[span_2](end_span).
-* **[span_3](start_span)[span_4](start_span)Image Parser:** @ARYANNNN1234 - Responsible for processing image files (`.png`, `.jpeg`) to perform OCR and generate rich, contextual descriptions[span_3](end_span)[span_4](end_span).
+* **[span_2](start_span)Architect:** @[Your GitHub Username] - Manages the overall project structure, integrates all modules, and performs the final security analysis to generate `Key Findings`[span_2](end_span).
+* **[span_3](start_span)[span_4](start_span)Image Parser:** @Aryan's GitHub Username - Responsible for processing image files (`.png`, `.jpeg`) to perform OCR and generate rich, contextual descriptions[span_3](end_span)[span_4](end_span).
 * **[span_5](start_span)Document Parser:** @Anamika's GitHub Username - Responsible for processing text-based documents (`.pptx`, `.xlsx`) to extract all text content[span_5](end_span).
-* **[span_6](start_span)[span_7](start_span)Text Cleanser:** @ashishanilsikaria - Responsible for taking raw text from the parsers and cleansing it of Personally Identifiable Information (PII)[span_6](end_span)[span_7](end_span).
+* **[span_6](start_span)[span_7](start_span)Text Cleanser:** @Ashish's GitHub Username - Responsible for taking raw text from the parsers and cleansing it of Personally Identifiable Information (PII)[span_6](end_span)[span_7](end_span).
 
 ---
 
