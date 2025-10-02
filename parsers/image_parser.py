@@ -1,4 +1,5 @@
 # parsers/image_parser.py
+import os
 import cv2
 import numpy as np
 from PIL import Image
@@ -9,16 +10,12 @@ from transformers import (
     BlipProcessor, BlipForConditionalGeneration,
     AutoProcessor, AutoModelForImageTextToText
 )
-# Import the new logo cleanser function
 from cleansers.logo_cleanser import mask_logo
 
 def parse_image(image_source: Image.Image or str) -> dict:
-    """
-    Cleanses an image of known logos, then extracts a description and raw text.
-    """
+    """Cleanses an image of all known logos, then extracts a description and raw text."""
     try:
         if isinstance(image_source, str):
-            # Load image from URL or local path
             if image_source.startswith('http'):
                 response = requests.get(image_source)
                 response.raise_for_status()
@@ -30,18 +27,21 @@ def parse_image(image_source: Image.Image or str) -> dict:
         else:
             raise TypeError("image_source must be a file path, URL, or PIL Image.")
 
-        # --- Step 1: Cleanse the Logo ---
+        # --- Step 1: Cleanse All Logos ---
         print("Performing logo cleansing...")
-        # Convert PIL Image to OpenCV format for cleansing
+        # Convert PIL Image to OpenCV format (CORRECTED TYPO)
         image_cv = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2BGR)
         
-        # Load the logo template (update path as needed)
-        template_cv = cv2.imread("logo_templates/optiv_logo.png")
+        cleansed_image_cv = image_cv 
+        template_folder = "logo_templates/"
+        if os.path.isdir(template_folder):
+            for template_file in os.listdir(template_folder):
+                template_path = os.path.join(template_folder, template_file)
+                template_cv = cv2.imread(template_path)
+                if template_cv is not None:
+                    cleansed_image_cv = mask_logo(cleansed_image_cv, template_cv)
         
-        # Call the cleanser function
-        cleansed_image_cv = mask_logo(image_cv, template_cv)
-        
-        # Convert the cleansed OpenCV image back to PIL format for AI models
+        # Convert the cleansed OpenCV image back to PIL format (CORRECTED TYPO)
         cleansed_image_pil = Image.fromarray(cv2.cvtColor(cleansed_image_cv, cv2.COLOR_BGR2RGB))
         
         device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -62,6 +62,13 @@ def parse_image(image_source: Image.Image or str) -> dict:
         with torch.no_grad():
             generated_ids = ocr_model.generate(**inputs, do_sample=False, tokenizer=ocr_processor.tokenizer, stop_strings="<|im_end|>")
         raw_text = ocr_processor.decode(generated_ids[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()
+
+        # --- Step 4: Clean up GPU memory ---
+        print("Cleaning up image parser models from GPU memory...")
+        del blip_model, ocr_model
+        import gc
+        gc.collect()
+        torch.cuda.empty_cache()
 
         return {"description": raw_description, "raw_text": raw_text}
 

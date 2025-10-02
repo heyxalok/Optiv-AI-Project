@@ -2,23 +2,30 @@
 from pptx import Presentation
 import openpyxl
 from transformers import pipeline
+import torch
 
 def summarize_text(text: str) -> str:
     """Generates a concise summary of a long block of text using an AI model."""
     try:
         summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
-        # Truncate text to fit model's max input size
         truncated_text = text[:1024]
         summary = summarizer(truncated_text, max_length=60, min_length=20, do_sample=False)
-        return summary[0]['summary_text']
+        result = summary[0]['summary_text']
+
+        # --- Clean up GPU memory ---
+        print("Cleaning up summarizer model from GPU memory...")
+        del summarizer
+        import gc
+        gc.collect()
+        torch.cuda.empty_cache()
+
+        return result
     except Exception as e:
         print(f"Summarization failed, falling back to truncation: {e}")
         return (text[:150] + '...') if len(text) > 150 else text
 
 def parse_document(file_path: str) -> dict:
-    """
-    Parses a document (.pptx or .xlsx) to extract raw text and an AI-generated description.
-    """
+    """Parses a document (.pptx or .xlsx) to extract raw text and an AI-generated description."""
     raw_text = ""
     description = ""
     all_text = []
