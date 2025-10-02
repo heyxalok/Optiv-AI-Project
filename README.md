@@ -1,25 +1,78 @@
 # Automating File Cleansing and Analysis Leveraging AI
 
+This project is a comprehensive Python-based prototype designed to solve the challenges outlined in the Optiv Cyber Simulation Exercise. The system automates the process of cleansing sensitive information from diverse file formats and leverages multiple state-of-the-art AI models to generate actionable security insights.
+
 ## 🎯 Project Goal
 
-The goal of this project is to design and prototype an automated solution for Optiv's security consultants. The system will cleanse diverse client files (like images, PowerPoints, and Excel sheets) by removing sensitive information, pre-process them into a consistent format, and analyze the data to generate meaningful security insights.
+The goal of this project is to design and prototype an automated solution for Optiv's security consultants. [cite_start]The system will cleanse diverse client files (like images, PowerPoints, and Excel sheets) by removing sensitive information, pre-process them into a consistent format, and analyze the data to generate meaningful security insights[cite: 5].
 
----
+## ✨ Key Features
 
-## 🧑‍💻 Team & Roles
+* **Multi-Modal File Processing:** Ingests and analyzes a wide range of file types, including `.png`, `.jpg`, scanned `.pdf`, `.pptx`, and `.xlsx`.
+* **Advanced Logo Cleansing:** Utilizes OpenCV's inpainting technique to seamlessly remove and "heal" areas where known client logos are detected.
+* **AI-Powered PII Redaction:** Employs a hybrid approach using SpaCy's Named Entity Recognition (NER) to intelligently find and mask names, combined with regex for contact details (emails, phone numbers).
+* **State-of-the-Art Analysis Engine:** Leverages a powerful Large Language Model (Mistral-7B) to act as an AI cybersecurity consultant, interpreting the cleansed data to produce high-quality, context-aware security findings.
+* **Automated Description Generation:** Uses a suite of AI models (BLIP for images, DistilBART for documents) to generate contextual, human-readable descriptions for all processed files.
 
-* **Architect:** @[hyexalok] - Manages the overall project structure, integrates all modules, and performs the final security analysis to generate `Key Findings`.
-* **Image Parser:** @[ARYANNNN1234] - Responsible for processing image files (`.png`, `.jpeg`) to perform OCR and generate rich, contextual descriptions.
-* **Document Parser:** @[Anamika's GitHub Username] - Responsible for processing text-based documents (`.pptx`, `.xlsx`) to extract all text content.
-* **Text Cleanser:** @[ashishanilsikaria] - Responsible for taking raw text from the parsers and cleansing it of Personally Identifiable Information (PII).
+## ⚙️ Architecture
 
----
+Below is the functional design diagram illustrating the project's architecture and data flow.
 
-## ✅ Phase 1 Sprint Goal (Deadline: Sunday, Sept 21st)
+*[Insert Your Functional Design Diagram Image Here]*
 
-The objective of our first sprint is for each team member to create a basic, functional script for their assigned role.
+## 🛠️ Tech Stack
 
-* **Architect:** Create the GitHub repo, define the project's folder structure, and build the main application skeleton (`main.py`) that shows the overall logic flow.
-* **Image Parser:** Create a script that can take an image as input and successfully perform both OCR and AI-driven image description.
-* **Document Parser:** Create a script that can take a `.pptx` or `.xlsx` file as input and extract all text.
-* **Text Cleanser:** Create a script that can take a string of text and remove basic PII like email addresses and phone numbers.
+* **Core:** Python 3.10+
+* **AI / ML:** PyTorch, Hugging Face Transformers, SpaCy, OpenCV
+* **Core Models:** `mistralai/Mistral-7B-Instruct-v0.2`, `Salesforce/blip-image-captioning-base`, `stepfun-ai/GOT-OCR-2.0-hf`, `sshleifer/distilbart-cnn-12-6`
+* **Data Handling & Parsing:** Pandas, OpenPyXL, python-pptx, pdf2image
+
+## 🚀 Setup & Usage (Google Colab)
+
+This project is designed to run in a Google Colab environment with a GPU.
+
+### 1. Environment Setup
+* Create a new Colab notebook and set the runtime to **T4 GPU** (`Runtime` -> `Change runtime type`).
+
+### 2. Project & Data Setup
+* Clone this repository or upload it as a ZIP file.
+* Create a folder named `logo_templates/` and add your logo image files (e.g., `optiv_logo.png`).
+* Add the documents you want to analyze to the `test_files/` folder.
+
+### 3. Install Dependencies
+* Run the following command in a cell to install all necessary packages.
+    ```python
+    !apt-get update
+    !apt-get install -y tesseract-ocr poppler-utils
+
+    !pip install --quiet \
+        "numpy==1.26.4" \
+        "transformers" \
+        "torch" \
+        "accelerate" \
+        "bitsandbytes" \
+        "pillow" \
+        "requests" \
+        "opencv-python-headless" \
+        "spacy==3.7.2" \
+        "pdf2image" \
+        "openpyxl" \
+        "python-pptx" \
+        "pandas"
+
+    !python -m spacy download en_core_web_sm
+    ```
+
+### 4. Hugging Face Authentication
+* The Mistral-7B model requires authentication. Run the following cell and paste your Hugging Face access token when prompted.
+    ```python
+    from huggingface_hub import login
+    login()
+    ```
+
+### 5. Running the Pipeline
+* Execute the main script to process all files in the `test_files` directory.
+    ```python
+    !python main.py
+    ```
+* The script will print a final, formatted table with the analysis results for each file.
